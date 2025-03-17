@@ -39,6 +39,7 @@ dependencies:
   awesome_bottom_bar: ^1.2.4
   bottom_bar_matu: ^1.5.0
   line_icons: ^2.0.3
+  carousel_custom_slider: ^0.0.9
 
 dev_dependencies:
   flutter_test:

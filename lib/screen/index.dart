@@ -4,14 +4,14 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:hai_tegal_getx/controller/index_controller.dart';
-import 'package:hai_tegal_getx/view/home.dart';
-import 'package:hai_tegal_getx/view/saved_screen.dart';
+import 'package:hai_tegal_getx/screen/menu/home_screen.dart';
+import 'package:hai_tegal_getx/screen/menu/saved_screen.dart';
 import 'package:line_icons/line_icons.dart';
 
 import '../app_routes.dart';
 import '../components/colors.dart';
-import 'account_screen.dart';
-import 'notification_screen.dart';
+import 'menu/account_screen.dart';
+import 'menu/notification_screen.dart';
 
 class Index extends GetView<IndexController> {
 
@@ -64,7 +64,7 @@ class Index extends GetView<IndexController> {
         child:  Obx(() => IndexedStack(
           index: controller.selectedIndex.value,
           children: [
-            Home(),
+            HomeScreen(),
             NotificationScreen(),
             SavedScreen(),
             AccountScreen(),

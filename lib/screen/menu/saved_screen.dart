@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:hai_tegal_getx/screen/not_logged_in.dart';
 
 
 class SavedScreen extends StatelessWidget {
@@ -6,6 +7,6 @@ class SavedScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const Placeholder();
+    return NotLoggedIn();
   }
 }

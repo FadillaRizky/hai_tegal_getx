@@ -3,7 +3,7 @@ import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:hai_tegal_getx/controller/splash_controller.dart';
 
-import '../components/colors.dart';
+import '../../components/colors.dart';
 
 class SplashScreen extends GetView<SplashController> {
 

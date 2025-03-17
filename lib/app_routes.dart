@@ -1,7 +1,9 @@
 import 'package:get/get.dart';
-import 'package:hai_tegal_getx/view/index.dart';
+import 'package:hai_tegal_getx/bindings/home_binding.dart';
+import 'package:hai_tegal_getx/bindings/index_binding.dart';
+import 'package:hai_tegal_getx/screen/index.dart';
 
-import 'view/splash_screen.dart';
+import 'screen/menu/splash_screen.dart';
 
 class AppRoutes {
   static const String init = '/';
@@ -13,15 +15,12 @@ class AppRoutes {
 
   // GetPage list for GetMaterialApp
   static final routes = [
-    GetPage(
-      name: init,
-      page: () => SplashScreen(),
-      transition: Transition.fadeIn,
-    ),
+    GetPage(name: init, page: () => SplashScreen(), transition: Transition.fadeIn),
     GetPage(
       name: index,
       page: () => Index(),
       transition: Transition.rightToLeft,
+      bindings: [IndexBinding(), HomeBinding()],
     ),
     // GetPage(
     //   name: settings,
