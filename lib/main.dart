@@ -7,7 +7,6 @@ import 'app_routes.dart';
 
 void main() {
   
-  Get.put(ApiClient(), permanent: true);
   runApp(const MyApp());
 }
 
