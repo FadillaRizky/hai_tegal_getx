@@ -18,88 +18,126 @@ class DetailPostController extends GetxController {
   var screenshotProcess = 0.obs;
   var nearestCategory = {}.obs;
   var reviewPostAllLMB = [].obs;
-  var reviewSummaryPostAllLMB = {
-    "1": 2,
-    "2": 5,
-    "3": 15,
-    "4": 18,
-    "5": 8,
-  }.obs;
+  var reviewSummaryPostAllLMB = {}.obs;
   var averageReviewCB = {"average": 4.2}.obs;
   var nearestPostAllLMB = [].obs;
   var userDetailMB = {}.obs;
   var markers = {}.obs;
-  
+  var dataSource = "default".obs; // Track where data came from
+
   // Mock location data
   var latitudeUserCB = "-6.8900".obs;
   var longitudeUserCB = "109.1200".obs;
 
-  // Method to launch Google Maps
-  Future<void> openMap(double lat, double lng) async {
-    final url = 'https://www.google.com/maps/search/?api=1&query=$lat,$lng';
-    
-    try {
-      if (await canLaunch(url)) {
-        await launch(url);
-      } else {
-        Get.snackbar(
-          "Error",
-          "Couldn't launch Google Maps",
-          backgroundColor: Colors.red,
-          colorText: Colors.white,
-        );
-      }
-    } catch (e) {
-      Get.snackbar(
-        "Error",
-        "An error occurred: $e",
-        backgroundColor: Colors.red,
-        colorText: Colors.white,
-      );
+  // Method to set data from home screen
+  void setPostData(Map<String, dynamic> postData) {
+    // Reset all states first
+    resetStates();
+
+    // Set the data
+    post.value = postData;
+    dataSource.value = "homescreen";
+
+    // Prepare additional data
+    reviewPostAllLMB.value = getMockReviews();
+    nearestPostAllLMB.value = getMockNearestPosts();
+    userDetailMB.value = getMockUserData();
+
+    // Set review summary data
+    reviewSummaryPostAllLMB.value = {"1": 2, "2": 5, "3": 15, "4": 18, "5": 8};
+
+    // Initialize nearest category if categories exist
+    if (postData['category'] != null && (postData['category'] as List).isNotEmpty) {
+      nearestCategory.value = postData['category'][0];
     }
+
+    isLoading.value = false;
+    debugPrint("Detail data set from homescreen");
+  }
+
+  // Reset all states to default
+  void resetStates() {
+    readAll.value = 0;
+    venueHoursAll.value = 0;
+    costAll.value = 0;
+    reviewAll.value = 0;
+    nearestAll.value = 0;
+    ratingCB.value = 0;
+    idEditedComment.value = 0;
+    screenshotProcess.value = 0;
+    isSaved.value = 0;
   }
 
   void loadPostDetails() {
     isLoading.value = true;
-    
+
+    // If data was set from homescreen and we're just refreshing, keep it
+    if (dataSource.value == "homescreen" && post.value.isNotEmpty) {
+      // Just reset states but keep the data
+      resetStates();
+      isLoading.value = false;
+      return;
+    }
+
+    // Otherwise load the mock data
     // Simulate API delay
     Future.delayed(Duration(milliseconds: 800), () {
+      resetStates();
+
       // Set static data
       post.value = getMockPostData();
       reviewPostAllLMB.value = getMockReviews();
       nearestPostAllLMB.value = getMockNearestPosts();
       userDetailMB.value = getMockUserData();
-      
+
+      // Set review summary data
+      reviewSummaryPostAllLMB.value = {"1": 2, "2": 5, "3": 15, "4": 18, "5": 8};
+
+      // Set nearest category
+      if (post.value['category'] != null && (post.value['category'] as List).isNotEmpty) {
+        nearestCategory.value = post.value['category'][0];
+      }
+
+      dataSource.value = "controller";
       isLoading.value = false;
+      debugPrint("Detail data loaded from controller");
     });
   }
-  
+
   void cekBookMark() {
     // For static implementation, just toggle between 0 and 1
     isSaved.value = isSaved.value == 0 ? 1 : 0;
   }
-  
+
   void loadReviewPostIndex(String postId) {
     // Static implementation - reviews already loaded in loadPostDetails
   }
-  
+
   void loadNearestPostIndex(String lat, String lng, String categoryId) {
     // Static implementation - nearby posts already loaded in loadPostDetails
   }
-  
+
   String dayCheck(String day) {
-    switch(day) {
-      case "1": return "Senin";
-      case "2": return "Selasa";
-      case "3": return "Rabu";
-      case "4": return "Kamis";
-      case "5": return "Jumat";
-      case "6": return "Sabtu";
-      case "7": return "Minggu";
-      default: return "";
+    switch (day) {
+      case "1":
+        return "Senin";
+      case "2":
+        return "Selasa";
+      case "3":
+        return "Rabu";
+      case "4":
+        return "Kamis";
+      case "5":
+        return "Jumat";
+      case "6":
+        return "Sabtu";
+      case "7":
+        return "Minggu";
+      default:
+        return "";
     }
   }
-  
+
   String date2(String dateString) {
     try {
       DateTime date = DateTime.parse(dateString);
@@ -108,23 +146,25 @@ class DetailPostController extends GetxController {
       return dateString;
     }
   }
-  
+
   String rupiah(double value) {
-    return value.toStringAsFixed(0).replaceAllMapped(
-        RegExp(r'(\d{1,3})(?=(\d{3})+(?!\d))'), (Match m) => '${m[1]}.');
+    return value
+        .toStringAsFixed(0)
+        .replaceAllMapped(RegExp(r'(\d{1,3})(?=(\d{3})+(?!\d))'), (Match m) => '${m[1]}.');
   }
-  
+
   double calculateDistance(double lat1, double lon1, double lat2, double lon2) {
     // In real implementation, this would calculate actual distance
     // For static version, returning a static value
     return 2.5;
   }
-  
+
   Map<String, dynamic> getMockPostData() {
     return {
       "post_id": "1",
       "post_title": "Pantai Alam Indah",
-      "post_short": "Pantai Alam Indah adalah sebuah pantai yang terletak di Kota Tegal, Jawa Tengah. Pantai ini menjadi salah satu destinasi wisata yang populer bagi masyarakat sekitar dan wisatawan dari luar daerah. Dengan hamparan pasir putih yang luas dan air laut yang jernih, pantai ini menawarkan pemandangan yang indah dan menenangkan.\n\nPengunjung dapat menikmati berbagai aktivitas seperti berenang, bermain pasir, atau sekadar bersantai sambil menikmati pemandangan matahari terbenam. Terdapat juga berbagai fasilitas seperti gazebo, area bermain anak, dan warung-warung yang menyajikan makanan laut segar dan masakan tradisional Tegal.",
+      "post_short":
+          "Pantai Alam Indah adalah sebuah pantai yang terletak di Kota Tegal, Jawa Tengah. Pantai ini menjadi salah satu destinasi wisata yang populer bagi masyarakat sekitar dan wisatawan dari luar daerah. Dengan hamparan pasir putih yang luas dan air laut yang jernih, pantai ini menawarkan pemandangan yang indah dan menenangkan.\n\nPengunjung dapat menikmati berbagai aktivitas seperti berenang, bermain pasir, atau sekadar bersantai sambil menikmati pemandangan matahari terbenam. Terdapat juga berbagai fasilitas seperti gazebo, area bermain anak, dan warung-warung yang menyajikan makanan laut segar dan masakan tradisional Tegal.",
       "img": [
         {"images_file": "assets/img/default_post.jpg"},
         {"images_file": "assets/img/default_post.jpg"},
@@ -136,15 +176,9 @@ class DetailPostController extends GetxController {
         "venue_x_coordinat": "-6.8543",
         "venue_y_coordinat": "109.1425",
       },
-      "village": {
-        "village_nm": "Mintaragen",
-      },
-      "district": {
-        "district_nm": "Tegal Timur",
-      },
-      "city": {
-        "city_nm": "Kota Tegal",
-      },
+      "village": {"village_nm": "Mintaragen"},
+      "district": {"district_nm": "Tegal Timur"},
+      "city": {"city_nm": "Kota Tegal"},
       "category": [
         {"category_id": "c1", "category_name": "Wisata Pantai"},
         {"category_id": "c2", "category_name": "Rekreasi Keluarga"},
@@ -156,7 +190,7 @@ class DetailPostController extends GetxController {
           "event_start_date": "2025-04-15",
           "event_end_date": "2025-04-17",
           "event_poster_img": "assets/img/default_post.jpg",
-        }
+        },
       ],
       "cost": [
         {"cost_name": "Tiket Masuk Dewasa", "cost_price": "15000"},
@@ -178,7 +212,7 @@ class DetailPostController extends GetxController {
       "total_index": 12,
     };
   }
-  
+
   List<Map<String, dynamic>> getMockReviews() {
     return [
       {
@@ -210,7 +244,7 @@ class DetailPostController extends GetxController {
       },
     ];
   }
-  
+
   List<Map<String, dynamic>> getMockNearestPosts() {
     return [
       {
@@ -218,7 +252,9 @@ class DetailPostController extends GetxController {
         "post": {
           "post_id": "2",
           "post_title": "Warung Seafood Bahari",
-          "img": [{"images_file": "assets/img/default_post.jpg"}],
+          "img": [
+            {"images_file": "assets/img/default_post.jpg"},
+          ],
           "venue": {
             "venue_addr": "Jl. Pantai Alam Indah No. 10, Kota Tegal",
             "venue_x_coordinat": "-6.8550",
@@ -232,7 +268,9 @@ class DetailPostController extends GetxController {
         "post": {
           "post_id": "3",
           "post_title": "Penginapan Tepi Pantai",
-          "img": [{"images_file": "assets/img/default_post.jpg"}],
+          "img": [
+            {"images_file": "assets/img/default_post.jpg"},
+          ],
           "venue": {
             "venue_addr": "Jl. Pantai Alam Indah No. 25, Kota Tegal",
             "venue_x_coordinat": "-6.8560",
@@ -246,7 +284,9 @@ class DetailPostController extends GetxController {
         "post": {
           "post_id": "4",
           "post_title": "Taman Wisata Kota",
-          "img": [{"images_file": "assets/img/default_post.jpg"}],
+          "img": [
+            {"images_file": "assets/img/default_post.jpg"},
+          ],
           "venue": {
             "venue_addr": "Jl. Ahmad Yani No. 5, Kota Tegal",
             "venue_x_coordinat": "-6.8600",
@@ -257,7 +297,7 @@ class DetailPostController extends GetxController {
       },
     ];
   }
-  
+
   Map<String, dynamic> getMockUserData() {
     return {
       "user_id": "u1",
@@ -265,11 +305,16 @@ class DetailPostController extends GetxController {
       "user_img": "", // Empty for default image
     };
   }
-  
+
   @override
   void onInit() {
     super.onInit();
-    loadPostDetails();
+    // Don't automatically load data - wait for explicit call
+    // This solves the competing data sources problem
+    // We'll check if data was already set from HomeScreen
+    if (post.isEmpty) {
+      loadPostDetails();
+    }
   }
 
   // Helper function for UI demo

@@ -4,6 +4,8 @@ import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:hai_tegal_getx/components/colors.dart';
 import 'package:hai_tegal_getx/controller/detail_post_controller.dart';
+import 'package:hai_tegal_getx/controller/home_controller.dart';
+import 'package:hai_tegal_getx/controller/index_controller.dart';
 import 'package:hai_tegal_getx/screen/home/detail_post_screen.dart';
 import 'package:line_icons/line_icons.dart';
 import 'package:shimmer/shimmer.dart';
@@ -17,6 +19,9 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   bool isLoading = true;
+
+  final controller = Get.find<IndexController>();
+  final homeController = Get.find<HomeController>();
 
   @override
   void initState() {
@@ -427,16 +432,6 @@ class _HomeScreenState extends State<HomeScreen> {
 
   Widget _buildTagsSection(BuildContext context) {
     // Sample tags
-    final List<String> tags = [
-      'Agrowisata',
-      'Air Panas',
-      'Air Terjun',
-      'Autentik',
-      'Ayam Goreng',
-      'Batik',
-      'Berkuda',
-      'Bioskop',
-    ];
 
     return isLoading
         ? ShimmerEffects.tagsShimmer(context)
@@ -446,11 +441,12 @@ class _HomeScreenState extends State<HomeScreen> {
           padding: const EdgeInsets.only(left: 20),
           child: ListView.builder(
             scrollDirection: Axis.horizontal,
-            itemCount: tags.length,
+            itemCount: homeController.featuredTags.length,
             itemBuilder: (context, index) {
+              final tag = homeController.featuredTags[index];
               return GestureDetector(
                 onTap: () {
-                  // Navigator.pushNamed(context, '/tags');
+                  controller.navigateToTagScreen(tag);
                 },
                 child: Container(
                   margin: const EdgeInsets.symmetric(horizontal: 5),
@@ -463,7 +459,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   ),
                   child: Center(
                     child: Text(
-                      tags[index],
+                      tag['tags_name'].toString(),
                       style: GoogleFonts.sourceSans3(
                         fontSize: 14,
                         color: WATagColor,
@@ -478,7 +474,7 @@ class _HomeScreenState extends State<HomeScreen> {
         );
   }
 
-  Widget _buildPenginapanSection(BuildContext context) {
+  Widget _buildPenginapanSection(BuildContext context) {  
     // Sample penginapan data
     final List<Map<String, dynamic>> penginapanItems = [
       {

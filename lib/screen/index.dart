@@ -21,7 +21,7 @@ class Index extends GetView<IndexController> {
       bottomNavigationBar: SizedBox(
         height: 0.08 * MediaQuery.of(context).size.height,
         child: BottomBarBubble(
-          selectedIndex: 0,
+          selectedIndex: controller.selectedIndex.value,
           color: WAPrimaryColor1,
           items: [
             BottomBarItem(
